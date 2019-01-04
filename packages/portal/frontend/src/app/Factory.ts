@@ -3,6 +3,7 @@ import Log from "../../../../common/Log";
 import {CS340AdminView} from "./views/340/CS340AdminView";
 import {CS340View} from "./views/340/CS340View";
 import {AdminView} from "./views/AdminView";
+import {CS210View} from "./views/cs210/CS210View";
 import {CS310AdminView} from "./views/cs310/CS310AdminView";
 
 import {CS310View} from "./views/cs310/CS310View";
@@ -56,6 +57,8 @@ export class Factory {
                 this.studentView = new CS310View(backendUrl); // default to 310 for unit testing
             } else if (this.name === 'classy') {
                 this.studentView = new CS310View(backendUrl); // default to 310 for deploy testing
+            } else if (this.name === 'cs210') {
+                this.studentView = new CS210View(backendUrl);
             } else if (this.name === 'cs310') {
                 this.studentView = new CS310View(backendUrl);
             } else if (this.name === 'sdmm') {
