@@ -9,6 +9,9 @@ import {Factory} from "../src/Factory";
 import {PersonKind} from "../src/Types";
 import {Test} from "../test/TestHarness";
 
+/**
+ * This sample file shows how to create a bunch of fake data for course testing.
+ */
 export class FrontendDatasetGenerator {
 
     private dc: DatabaseController = null;
@@ -81,6 +84,7 @@ export class FrontendDatasetGenerator {
 
     private async createTeams(): Promise<void> {
         Log.info("FrontendDatasetGenerator::createTeams() - start");
+        const cc = await Factory.getCourseController(this.ghc);
 
         const tc = new TeamController();
         const delivs = await this.dc.getDeliverables();
@@ -111,7 +115,8 @@ export class FrontendDatasetGenerator {
                 }
 
                 if (p1Team === null && p2Team === null) {
-                    const names = await Factory.getCourseController(this.ghc).computeNames(deliv, [p1, p2]);
+
+                    const names = await cc.computeNames(deliv, [p1, p2]);
                     // both members not on a team
                     const team = Test.getTeam(names.teamName, deliv.id, [p1.id, p2.id]);
                     Log.info("FrontendDatasetGenerator::createTeams() - creating team: " + team.id);

@@ -1,29 +1,27 @@
 /**
- * This is the main student page for CS310.
+ * This is the main student page for CS210.
  *
- * Other courses should _not_ modify this but instead build their own
- * student views, as they need for their own courses.
  */
 
 import {OnsButtonElement} from "onsenui";
-import Log from "../../../../../../common/Log";
-import {Payload, TeamFormationTransport, TeamTransport} from "../../../../../../common/types/PortalTypes";
+import Log from "../../../../../common/Log";
+import {Payload, TeamFormationTransport, TeamTransport} from "../../../../../common/types/PortalTypes";
 
-import {UI} from "../../util/UI";
-import {StudentView} from "../StudentView";
+import {UI} from "../util/UI";
+import {AbstractStudentView} from "../views/AbstractStudentView";
 
-export class CS310View extends StudentView {
+export class CustomStudentView extends AbstractStudentView {
 
     private teams: TeamTransport[];
 
     constructor(remoteUrl: string) {
         super();
-        Log.info("CS310View::<init>");
+        Log.info("CS210View::<init>");
         this.remote = remoteUrl;
     }
 
     public renderPage(opts: {}) {
-        Log.info('CS310View::renderPage() - start; options: ' + opts);
+        Log.info('CustomStudentView::renderPage() - start; options: ' + opts);
         const that = this;
         const start = Date.now();
 
@@ -32,10 +30,10 @@ export class CS310View extends StudentView {
             // super render complete; do custom work
             return that.renderStudentPage();
         }).then(function() {
-            Log.info('CS310View::renderPage(..) - prep & render took: ' + UI.took(start));
+            Log.info('CustomStudentView::renderPage(..) - prep & render took: ' + UI.took(start));
             UI.hideModal();
         }).catch(function(err) {
-            Log.error('CS310View::renderPage() - ERROR: ' + err);
+            Log.error('CustomStudentView::renderPage() - ERROR: ' + err);
             UI.hideModal();
         });
     }
@@ -43,7 +41,7 @@ export class CS310View extends StudentView {
     private async renderStudentPage(): Promise<void> {
         UI.showModal('Fetching Data');
         try {
-            Log.info('CS310View::renderStudentPage(..) - start');
+            Log.info('CustomStudentView::renderStudentPage(..) - start');
 
             // grades renedered in StudentView
 
@@ -54,7 +52,7 @@ export class CS310View extends StudentView {
             this.teams = teams;
             await this.renderTeams(teams);
 
-            Log.info('CS310View::renderStudentPage(..) - done');
+            Log.info('CustomStudentView::renderStudentPage(..) - done');
         } catch (err) {
             Log.error('Error encountered: ' + err.message);
         }
@@ -72,14 +70,14 @@ export class CS310View extends StudentView {
             this.teams = data;
             return data;
         } catch (err) {
-            Log.error('CS310View::fetchTeamData(..) - ERROR: ' + err.message);
+            Log.error('CustomStudentView::fetchTeamData(..) - ERROR: ' + err.message);
             this.teams = [];
             return [];
         }
     }
 
     private async renderTeams(teams: TeamTransport[]): Promise<void> {
-        Log.trace('CS310View::renderTeams(..) - start');
+        Log.trace('CustomStudentView::renderTeams(..) - start');
         const that = this;
 
         // make sure these are hidden
@@ -103,15 +101,15 @@ export class CS310View extends StudentView {
 
             const button = document.querySelector('#studentSelectPartnerButton') as OnsButtonElement;
             button.onclick = function(evt: any) {
-                Log.info('CS310View::renderTeams(..)::createTeam::onClick');
+                Log.info('CustomStudentView::renderTeams(..)::createTeam::onClick');
                 that.formTeam().then(function(team) {
-                    Log.info('CS310View::renderTeams(..)::createTeam::onClick::then - team created');
+                    Log.info('CustomStudentView::renderTeams(..)::createTeam::onClick::then - team created');
                     that.teams.push(team);
                     if (team !== null) {
                         that.renderPage({}); // simulating refresh
                     }
                 }).catch(function(err) {
-                    Log.info('CS310View::renderTeams(..)::createTeam::onClick::catch - ERROR: ' + err);
+                    Log.info('CustomStudentView::renderTeams(..)::createTeam::onClick::catch - ERROR: ' + err);
                 });
             };
 
@@ -128,7 +126,7 @@ export class CS310View extends StudentView {
     }
 
     private async formTeam(): Promise<TeamTransport> {
-        Log.info("CS310View::formTeam() - start");
+        Log.info("CustomStudentView::formTeam() - start");
         const otherId = UI.getTextFieldValue('studentSelectPartnerText');
         const myGithubId = this.getStudent().githubId;
         const payload: TeamFormationTransport = {
@@ -140,14 +138,14 @@ export class CS310View extends StudentView {
         options.method = 'post';
         options.body = JSON.stringify(payload);
 
-        Log.info("CS310View::formTeam() - URL: " + url + "; payload: " + JSON.stringify(payload));
+        Log.info("CustomStudentView::formTeam() - URL: " + url + "; payload: " + JSON.stringify(payload));
         const response = await fetch(url, options);
 
-        Log.info("CS310View::formTeam() - responded");
+        Log.info("CustomStudentView::formTeam() - responded");
 
         const body = await response.json() as Payload;
 
-        Log.info("CS310View::formTeam() - response: " + JSON.stringify(body));
+        Log.info("CustomStudentView::formTeam() - response: " + JSON.stringify(body));
 
         if (typeof body.success !== 'undefined') {
             // worked
@@ -157,7 +155,7 @@ export class CS310View extends StudentView {
             UI.showError(body);
             return null;
         } else {
-            Log.error("CS310View::formTeam() - else ERROR: " + JSON.stringify(body));
+            Log.error("CustomStudentView::formTeam() - else ERROR: " + JSON.stringify(body));
         }
     }
 

@@ -17,8 +17,8 @@ Main course forks:
 * [ubccpsc221/classy](https://github.com/ubccpsc221/classy)
 * [ubccpsc310/classy](https://github.com/ubccpsc310/classy)
 * [cpsc340/classy](https://github.com/CPSC340/classy)
+* [secapstone/classy](https://github.com/SECapstone/classy)
 * [MDS TBD](NOTSETYET)
-* [SDMM TBD](NOTSETYET)
 
 ## Development Process
 
@@ -130,6 +130,11 @@ On `fork`:
 1. Open the `sync` branch in the GitHub web interface and make a pull request `fork/sync` to `root/master` (sends cherry picked commits to `root/master` that can then be evaluated in a PR before being merged into `root/master`).
 
 <img src="docs/dev-upstream.png"/>
+
+### Customizing your instance of Classy
+
+1. To add to the backend, you should modify `packages/portal/backend/src/custom/CustomCourseController.ts` and `packages/portal/backend/src/custom/CustomRoutes.ts`. These changes should ***NOT*** be pushed back into `classy/master` but should only stay in the fork.
+2. To add to the frontend, you should add the `pacakges/portal/frontend/src/app/custom/CustomStudentView.ts`. These changes should ***NOT*** be pushed back into `classy/master` but should only stay in the fork.
 
 ### About dev packages
 

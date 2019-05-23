@@ -174,7 +174,7 @@ export default class GeneralRoutes implements IREST {
 
         GeneralRoutes.performGetResource(auth, path).then(function(resource: any) {
 
-            const filePath = Config.getInstance().getProp(ConfigKey.persistDir) + path;
+            const filePath = Config.getInstance().getProp(ConfigKey.persistDir) + "/runs" + path;
             Log.info("GeneralRoutes::getResource(..) - start; trying to read file: " + filePath);
 
             const rs = fs.createReadStream(filePath);
@@ -353,7 +353,7 @@ export default class GeneralRoutes implements IREST {
                 }
             }
 
-            const cc = Factory.getCourseController(new GitHubController(GitHubActions.getInstance()));
+            const cc = await Factory.getCourseController(new GitHubController(GitHubActions.getInstance()));
             const deliv = await dc.getDeliverable(requestedTeam.delivId);
             const names = await cc.computeNames(deliv, people);
 
@@ -433,8 +433,8 @@ export default class GeneralRoutes implements IREST {
                     // TODO: should probably consider repo.custom.githubCreated
                     repoTrans.push(RepositoryController.repositoryToTransport(repo));
                 }
-                return repoTrans;
             }
+            return repoTrans;
         }
     }
 
