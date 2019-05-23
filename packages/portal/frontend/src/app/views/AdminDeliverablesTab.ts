@@ -292,7 +292,7 @@ export class AdminDeliverablesTab extends AdminPage {
             options: AdminView.getOptions()
         };
         const state = {
-            checkedItemId: selectedDockerImage
+            checkedItemTag: selectedDockerImage
         };
         new DockerListImageView(list).bind(dataSource, state).catch(function(err: Error) {
             UI.showErrorToast("Docker images: " + err);
@@ -493,7 +493,7 @@ export class AdminDeliverablesTab extends AdminPage {
 
         if (typeof body.success !== 'undefined') {
             // worked
-            UI.showErrorToast("Deliverable saved successfully.");
+            UI.showSuccessToast("Deliverable saved successfully.");
             UI.popPage();
         } else {
             UI.showAlert(body.failure.message);
@@ -506,7 +506,7 @@ export class AdminDeliverablesTab extends AdminPage {
             return null;
         }
         const label = document.querySelector('label[for=' + checkedRadio.id + ']');
-        const sha = label.firstElementChild.firstElementChild.innerHTML;
+        const sha = label.firstElementChild.children[1].innerHTML;
         return sha;
     }
 
@@ -572,6 +572,10 @@ export class AdminDeliverablesTab extends AdminPage {
                     }
                 };
                 xhr.onload = function() {
+                    if (xhr.status >= 400) {
+                        return reject(new Error(xhr.responseText));
+                    }
+
                     if (lines.length > 2 && lines[lines.length - 2].startsWith("Successfully built")) {
                         const sha = lines[lines.length - 2].replace("Successfully built ", "").trim();
                         // const tag = lines[lines.length - 1].replace("Successfully tagged ", "");
