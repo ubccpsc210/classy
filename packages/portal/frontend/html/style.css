@@ -94,6 +94,10 @@ Dashboard Page
     background-color: hsl(348, 100%, 61%);
 }
 
+.hidden {
+    display: none;
+}
+
 /**
 stdio viewer Page
  */
@@ -103,4 +107,18 @@ stdio viewer Page
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+#adminClasslistConfirmHeader .dialog {
+    width: 80%;
+}
+
+#adminClasslistConfirmHeader ons-list {
+    overflow-y: auto;
+    height: 80vh;
+}
+
+#adminClasslistConfirmHeader ons-button {
+    text-align: center;
+    width: 100%;
 }

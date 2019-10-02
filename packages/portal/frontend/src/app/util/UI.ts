@@ -2,6 +2,7 @@
  * Created by rtholmes on 2017-10-04.
  */
 import Log from "../../../../../common/Log";
+import {StudentTransport} from "../../../../../common/types/PortalTypes";
 
 // const OPEN_DELIV_KEY = 'open';
 // const CLOSE_DELIV_KEY = 'close';
@@ -141,6 +142,7 @@ export class UI {
             Log.trace("UI::showModal( " + text + " ) - start; modal: " + m);
             if (m !== null) {
                 if (text != null) {
+                    const content = document.querySelectorAll('#modalText') as any;
                     const textFields = document.querySelectorAll('#modalText') as any;
                     for (const t of textFields) {
                         // document.getElementById('modalText').innerHTML = text;
@@ -287,6 +289,26 @@ export class UI {
         return ons.notification.alert(message);
     }
 
+    public static templateConfirm(template: string, options: {header?: string, listContent?: Array<{text: string, subtext?: string}>}) {
+        return ons.createElement(template, {append: true}).then(function(classlistDialog: any) {
+            const onsList = classlistDialog.querySelector('ons-list') as HTMLElement;
+            (classlistDialog.querySelector('ons-list-header') as HTMLElement).innerHTML = options.header;
+            classlistDialog.querySelector('ons-button').onclick = function() { classlistDialog.hide(); };
+            if (options && options.listContent) {
+                options.listContent.forEach(function(listItem) {
+                    onsList.appendChild(UI.createListItem(listItem.text, listItem.subtext || ''));
+                });
+            }
+            classlistDialog.show();
+        })
+        .catch(function(err: Error) {
+            Log.error('UI::prompt(..) - ERROR: ' + err.message);
+        });
+    }
+    public static confirm(message: string, options: {template: string, header?: string}) {
+        return ons.notification.confirm(message);
+    }
+
     // SDMM: move
     public static showD1TeamDialog() {
         const dialog: any = document.getElementById('d1teamDialog');
@@ -384,4 +406,12 @@ export class UI {
         }
     }
 
+    public static clearTextField(fieldName: string) {
+        const field = document.querySelector('#' + fieldName) as HTMLTextAreaElement;
+        if (field !== null) {
+            field.value = '';
+        } else {
+            Log.error('UI::clearTextField( ' + fieldName + ' ) - element does not exist');
+        }
+    }
 }
