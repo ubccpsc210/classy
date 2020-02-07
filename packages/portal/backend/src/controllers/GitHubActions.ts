@@ -835,6 +835,11 @@ export class GitHubActions implements IGitHubActions {
                 const url = config.getProp(ConfigKey.githubHost) + "/orgs/" + config.getProp(ConfigKey.org) + "/teams/" + teamName;
                 // TODO: simplify callees by setting Team.URL here and persisting it (like we do with createRepo)
                 Log.info("GitHubAction::teamCreate(..) - success; new: " + id + "; took: " + Util.took(start));
+
+                // remove default token provider/maintainer from team
+                await this.removeMembersFromTeam(teamName,
+                    [Config.getInstance().getProp(ConfigKey.githubBotName)]);
+
                 return {teamName: teamName, githubTeamNumber: id, URL: url};
             }
         } catch (err) {
@@ -1130,13 +1135,13 @@ export class GitHubActions implements IGitHubActions {
     }
 
     public async isOnAdminTeam(userName: string): Promise<boolean> {
-        const isAdmin = await this.isOnTeam('admin', userName);
+        const isAdmin = await this.isOnTeam(TeamController.ADMIN_NAME, userName);
         Log.trace('GitHubAction::isOnAdminTeam( ' + userName + ' ) - result: ' + isAdmin);
         return isAdmin;
     }
 
     public async isOnStaffTeam(userName: string): Promise<boolean> {
-        const isStaff = await this.isOnTeam('staff', userName);
+        const isStaff = await this.isOnTeam(TeamController.STAFF_NAME, userName);
         Log.trace('GitHubAction::isOnStaffTeam( ' + userName + ' ) - result: ' + isStaff);
         return isStaff;
     }
@@ -1145,7 +1150,7 @@ export class GitHubActions implements IGitHubActions {
         const gh = this;
         const start = Date.now();
 
-        if (teamName !== 'staff' && teamName !== 'admin') {
+        if (teamName !== TeamController.STAFF_NAME && teamName !== TeamController.ADMIN_NAME) {
             // sanity-check non admin/staff teams
             await GitHubActions.checkDatabase(null, teamName);
         }
@@ -2050,8 +2055,8 @@ export class TestGitHubActions implements IGitHubActions {
     }
 
     private teams: any = {
-        staff: {id: 'staff', teamName: 'staff', githubTeamNumber: '1000'},
-        admin: {id: 'admin', teamName: 'admin', githubTeamNumber: '1001'}
+        staff: {id: TeamController.STAFF_NAME, teamName: TeamController.STAFF_NAME, githubTeamNumber: '1000'},
+        admin: {id: TeamController.ADMIN_NAME, teamName: TeamController.ADMIN_NAME, githubTeamNumber: '1001'}
     };
 
     // TODO: use a private teams map to keep track of teams
